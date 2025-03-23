@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Exit Simulator™</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #111;
+      color: #fff;
+      text-align: center;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 10px;
+    }
+
+    p.tagline {
+      font-style: italic;
+      color: #aaa;
+      margin-bottom: 30px;
+    }
+
+    .metrics {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+    }
+
+    .metric {
+      background: #222;
+      padding: 15px;
+      border-radius: 10px;
+      width: 120px;
+    }
+
+    .metric h2 {
+      font-size: 1.2em;
+      margin-bottom: 5px;
+      color: #aaa;
+    }
+
+    .metric span {
+      font-size: 1.5em;
+      font-weight: bold;
+      color: #ffd700;
+    }
+
+    button {
+      font-size: 1.2em;
+      padding: 15px 30px;
+      background-color: #1e90ff;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-bottom: 30px;
+    }
+
+    button:hover {
+      background-color: #63b3ed;
+    }
+
+    #eventLog {
+      max-width: 500px;
+      margin: 0 auto;
+      font-size: 1em;
+      color: #ccc;
+      line-height: 1.6;
+    }
+
+    #result {
+      font-size: 1.6em;
+      color: #ff6347;
+      margin-top: 20px;
+    }
+
+    #footer {
+      margin-top: 60px;
+      font-size: 0.85em;
+      color: #777;
+    }
+  </style>
+</head>
+<body>
+  <h1>Exit Simulator™</h1>
+  <p class="tagline">Click your way from seed to exit. Or flame out trying.</p>
+
+  <div class="metrics">
+    <div class="metric">
+      <h2>Valuation</h2>
+      <span id="valuation">$0M</span>
+    </div>
+    <div class="metric">
+      <h2>Runway</h2>
+      <span id="runway">12 mo</span>
+    </div>
+    <div class="metric">
+      <h2>Hype</h2>
+      <span id="hype">50</span>
+    </div>
+  </div>
+
+  <button onclick="hustle()">🚀 Hustle</button>
+
+  <div id="eventLog"></div>
+  <div id="result"></div>
+
+  <div id="footer">
+    Made by SiliconSnark with coffee, chaos, and zero PMF.<br>
+    <a href="https://siliconsnark.com" target="_blank" style="color:#aaa;">Visit SiliconSnark</a>
+  </div>
+
+  <script>
+    let valuation = 0;
+    let runway = 12;
+    let hype = 50;
+    let clickCount = 0;
+
+    const valuationEl = document.getElementById("valuation");
+    const runwayEl = document.getElementById("runway");
+    const hypeEl = document.getElementById("hype");
+    const eventLog = document.getElementById("eventLog");
+    const result = document.getElementById("result");
+
+    const events = [
+      { msg: "TechCrunch mentions your startup. +$10M", val: 10, hype: 5, runway: 0 },
+      { msg: "Your AI accidentally radicalizes a chatbot. -$5M", val: -5, hype: -10, runway: 0 },
+      { msg: "Sequoia likes your deck. +$15M +6mo runway", val: 15, hype: 10, runway: 6 },
+      { msg: "You tweet something bad. -20 hype", val: 0, hype: -20, runway: 0 },
+      { msg: "You pivot to blockchain. Everyone claps. +$5M", val: 5, hype: 5, runway: 0 },
+      { msg: "Co-founder rage quits. -3mo runway", val: 0, hype: -5, runway: -3 },
+      { msg: "You host a hype launch party with no product. -$2M +15 hype", val: -2, hype: 15, runway: 0 },
+      { msg: "Investor says 'circle back next quarter'. -2mo runway", val: 0, hype: 0, runway: -2 },
+      { msg: "You go viral on X. +10 hype", val: 0, hype: 10, runway: 0 },
+      { msg: "Your metrics are fake. -$8M -10 hype", val: -8, hype: -10, runway: 0 },
+    ];
+
+    function hustle() {
+      if (runway <= 0 || valuation >= 100) return;
+
+      clickCount++;
+      valuation += 1;
+      runway -= 0.25;
+
+      if (clickCount % getRandomInt(3, 5) === 0) triggerEvent();
+
+      updateUI();
+
+      if (valuation >= 100) {
+        result.textContent = "🎉 You exited! IPO or acquisition... who cares, you’re rich.";
+      } else if (runway <= 0) {
+        result.textContent = "💀 You ran out of runway. Better luck next startup.";
+      }
+    }
+
+    function triggerEvent() {
+      const e = events[Math.floor(Math.random() * events.length)];
+      valuation += e.val;
+      hype += e.hype;
+      runway += e.runway;
+
+      if (valuation < 0) valuation = 0;
+      if (hype < 0) hype = 0;
+      if (runway < 0) runway = 0;
+
+      const log = document.createElement("p");
+      log.textContent = "📣 " + e.msg;
+      eventLog.prepend(log);
+    }
+
+    function updateUI() {
+      valuationEl.textContent = `$${Math.round(valuation)}M`;
+      runwayEl.textContent = `${Math.max(0, Math.round(runway))} mo`;
+      hypeEl.textContent = `${Math.round(hype)}`;
+    }
+
+    function getRandomInt(min, max) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+  </script>
+</body>
+</html>
